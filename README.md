@@ -11,8 +11,8 @@
 
 This project is not just a typical CRUD application. It is a smart financial assistant that helps users track their expenses and utilizes **Artificial Intelligence** to analyze spending habits. By leveraging the power of **Filament PHP** for a robust admin panel and **OpenAI API** for data analysis, this application turns raw numbers into actionable financial plans.
 
-![Dashboard Screenshot](path/to/your-screenshot.png) 
-*(Note: Please replace the link above with a screenshot of your Filament Dashboard)*
+<img width="1357" height="602" alt="لقطة الشاشة 2026-02-02 150006" src="https://github.com/user-attachments/assets/c74f0d10-16eb-4677-867d-e4cd843170a0" />
+
 
 ## ✨ Key Features
 
