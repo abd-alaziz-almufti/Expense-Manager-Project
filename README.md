@@ -80,7 +80,7 @@ Follow these steps to run the project locally:
     ```bash
     php artisan serve
     ```
-    Visit `http://127.0.0.1:8000/admin` to access the dashboard.
+    Visit `http://127.0.0.1:8000/user` to access the dashboard.
 
 ## 🔒 Security Note
 This project follows strict security practices. API keys are stored in environment variables and are never exposed to the client-side.
