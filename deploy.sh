@@ -26,7 +26,7 @@ php artisan migrate --force
 
 # بناء الـ assets
 echo "Building frontend assets..."
-npm ci
+npm install
 npm run build
 
 echo "=== Deploy Complete ==="

@@ -51,7 +51,7 @@ COPY . .
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # بناء الـ assets
-RUN npm ci && npm run build
+RUN npm install && npm run build
 
 # صلاحيات الكتابة على storage و bootstrap/cache
 RUN chmod -R 775 storage bootstrap/cache

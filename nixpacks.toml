@@ -16,7 +16,7 @@ nixPkgs = [
 [phases.build]
 cmds = [
     'composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-req=ext-intl --ignore-platform-req=ext-zip',
-    'npm ci',
+    'npm install',
     'npm run build'
 ]
 
