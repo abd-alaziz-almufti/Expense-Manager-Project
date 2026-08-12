@@ -1,0 +1,24 @@
+[providers]
+providers = ['php', 'node']
+
+[phases.setup]
+nixPkgs = [
+    'php82',
+    'php82Extensions.intl',
+    'php82Extensions.zip',
+    'php82Extensions.pdo_mysql',
+    'php82Extensions.mbstring',
+    'php82Extensions.bcmath',
+    'composer',
+    'nodejs_22'
+]
+
+[phases.build]
+cmds = [
+    'composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-req=ext-intl --ignore-platform-req=ext-zip',
+    'npm ci',
+    'npm run build'
+]
+
+[start]
+cmd = 'php artisan migrate --force && php artisan config:cache && php artisan route:cache && php artisan view:cache && php artisan serve --host=0.0.0.0 --port=$PORT'
