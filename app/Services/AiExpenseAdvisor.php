@@ -16,7 +16,7 @@ class AiExpenseAdvisor
             ->get();
 
         if ($expenses->isEmpty()) {
-            return 'No expenses recorded for this month yet.';
+            return 'عذراً، لم يتم تسجيل أي مصاريف لهذا الشهر حتى الآن. قم بإضافة بعض المصاريف أولاً للحصول على تحليلات ونصائح مخصصة.';
         }
 
         $total = $expenses->sum('amount');
@@ -64,17 +64,26 @@ class AiExpenseAdvisor
             5. Mention specific categories and dollar amounts when possible.
             6. Keep the tone friendly, supportive, and easy to understand.
             
-            Respond in clear bullet points.
+            Respond in clear bullet points in Arabic.
             ";
 
-        $response = OpenAI::chat()->create([
-            'model' => 'gpt-4o-mini',
-            'messages' => [
-                ['role' => 'user', 'content' => $prompt],
-            ],
-        ]);
+        try {
+            $response = OpenAI::chat()->create([
+                'model' => config('openai.model', 'gpt-4o-mini'),
+                'messages' => [
+                    ['role' => 'user', 'content' => $prompt],
+                ],
+            ]);
 
-        return $response->choices[0]->message->content;
+            return $response->choices[0]->message->content;
+        } catch (\OpenAI\Exceptions\RateLimitException $e) {
+            \Log::error('OpenAI RateLimitException', ['error' => $e->getMessage()]);
+            return "عذراً، المساعد الذكي مشغول حالياً بسبب كثرة الاستخدام. يرجى المحاولة بعد قليل.";
+        } catch (\Throwable $e) {
+            \Log::error('OpenAI Exception', ['error' => $e->getMessage()]);
+            return "عذراً، حدث خطأ غير متوقع أثناء إعداد النصائح المالية. يرجى المحاولة في وقت لاحق.";
+        }
+
     }
 
     public function optimizeBudget(int $userId): array
@@ -126,36 +135,46 @@ class AiExpenseAdvisor
             {\"Food\":250,\"Housing\":420,\"Entertainment\":150,\"Transport\":180}
             ";
 
-        $response = OpenAI::chat()->create([
-            'model' => 'gpt-4o-mini',
-            'messages' => [
-                ['role' => 'user', 'content' => $prompt],
-            ],
-        ]);
-
-        $content = trim($response->choices[0]->message->content);
-
-        // تنظيف Markdown
-        $content = preg_replace('/```(json)?/i', '', $content);
-        $content = trim($content);
-
-        $plan = json_decode($content, true);
-
-        if (!is_array($plan)) {
-            \Log::error('AI budget optimization failed', [
-                'response' => $content,
+        try {
+            $response = OpenAI::chat()->create([
+                'model' => config('openai.model', 'gpt-4o-mini'),
+                'messages' => [
+                    ['role' => 'user', 'content' => $prompt],
+                ],
             ]);
 
+
+            $content = trim($response->choices[0]->message->content);
+
+            // تنظيف Markdown
+            $content = preg_replace('/```(json)?/i', '', $content);
+            $content = trim($content);
+
+            $plan = json_decode($content, true);
+
+            if (!is_array($plan)) {
+                \Log::error('AI budget optimization failed', [
+                    'response' => $content,
+                ]);
+
+                return [];
+            }
+
+            // تأكيد أن القيم أرقام
+            return collect($plan)
+                ->mapWithKeys(fn($amount, $category) => [
+                    $category => (float) $amount,
+                ])
+                ->toArray();
+        } catch (\OpenAI\Exceptions\RateLimitException $e) {
+            \Log::error('OpenAI RateLimitException in optimizeBudget', ['error' => $e->getMessage()]);
+            return [];
+        } catch (\Throwable $e) {
+            \Log::error('OpenAI Exception in optimizeBudget', ['error' => $e->getMessage()]);
             return [];
         }
-
-        // تأكيد أن القيم أرقام
-        return collect($plan)
-            ->mapWithKeys(fn($amount, $category) => [
-                $category => (float) $amount,
-            ])
-            ->toArray();
     }
+
 
 
 }

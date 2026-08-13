@@ -46,7 +46,11 @@ class Dashboard extends BaseDashboard
                     $plan = $service->optimizeBudget(auth()->id());
 
                     if (empty($plan)) {
-                        return new HtmlString('<p class="text-sm text-gray-500">لا توجد اقتراحات تحسين متاحة حالياً.</p>');
+                        return new HtmlString('
+                            <div style="background: rgba(239, 68, 68, 0.05); padding: 1.25rem; border-radius: 0.75rem; border-left: 4px solid #ef4444; color: #b91c1c; line-height: 1.6;">
+                                عذراً، تعذر إعداد اقتراحات تحسين الميزانية حالياً. يرجى المحاولة في وقت لاحق.
+                            </div>
+                        ');
                     }
 
                     $categories = Category::where('user_id', auth()->id())->get();
@@ -95,6 +99,14 @@ class Dashboard extends BaseDashboard
                     $service = app(AiExpenseAdvisor::class);
                     $plan = $service->optimizeBudget(auth()->id());
 
+                    if (empty($plan)) {
+                        Notification::make()
+                            ->title('عذراً، تعذر تطبيق خطة تحسين الميزانية حالياً. يرجى المحاولة لاحقاً.')
+                            ->warning()
+                            ->send();
+                        return;
+                    }
+
                     $changes = 0;
 
                     foreach ($plan as $categoryName => $amount) {
@@ -123,6 +135,7 @@ class Dashboard extends BaseDashboard
                         ->success()
                         ->send();
                 }),
+
 
         ];
     }

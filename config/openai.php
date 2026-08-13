@@ -46,4 +46,8 @@ return [
     */
 
     'request_timeout' => env('OPENAI_REQUEST_TIMEOUT', 30),
+    'verify_ssl' => env('OPENAI_VERIFY_SSL', true),
+    'model' => env('OPENAI_MODEL', 'gpt-4o-mini'),
 ];
+
+
