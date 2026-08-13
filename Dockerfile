@@ -61,6 +61,7 @@ RUN chmod -R 775 storage bootstrap/cache
 # ============================================================
 CMD php artisan storage:link --force 2>/dev/null || true; \
     php artisan migrate --force && \
+    php artisan filament:assets && \
     php artisan config:cache && \
     php artisan route:cache && \
     php artisan view:cache && \
