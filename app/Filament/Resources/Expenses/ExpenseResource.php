@@ -19,7 +19,18 @@ class ExpenseResource extends Resource
 {
     protected static ?string $model = Expense::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCreditCard;
+
+    protected static string|\UnitEnum|null $navigationGroup = 'إدارة المال | Financial Management';
+
+
+    protected static ?string $navigationLabel = 'المصاريف | Expenses';
+
+    protected static ?string $modelLabel = 'مصروف | Expense';
+
+    protected static ?string $pluralModelLabel = 'المصاريف | Expenses';
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'amount';
 
@@ -55,3 +66,4 @@ class ExpenseResource extends Resource
             ->where('user_id', auth()->id());
     }
 }
+

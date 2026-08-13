@@ -15,39 +15,45 @@ class ExpensesTable
         return $table
             ->columns([
                 TextColumn::make('category.name')
-                    ->label('Category')
+                    ->label('الفئة | Category')
+                    ->badge()
+                    ->color('indigo')
+                    ->icon('heroicon-m-tag')
                     ->sortable()
                     ->searchable(),
 
                 TextColumn::make('amount')
-                    ->label('Amount')
+                    ->label('المبلغ | Amount')
                     ->money('USD')
-                    ->sortable(),
+                    ->sortable()
+                    ->weight('bold')
+                    ->color('danger'),
 
                 TextColumn::make('expense_date')
-                    ->label('Date')
-                    ->date()
+                    ->label('التاريخ | Date')
+                    ->date('d M Y')
+                    ->icon('heroicon-m-calendar')
                     ->sortable(),
 
                 TextColumn::make('note')
-                    ->label('Note')
-                    ->limit(30)
+                    ->label('ملاحظات | Note')
+                    ->limit(35)
+                    ->searchable()
                     ->toggleable(),
 
                 TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
+                    ->label('تاريخ الإضافة')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                //
-            ])
+            ->emptyStateHeading('لا توجد مصاريف مسجلة حتى الآن')
+            ->emptyStateDescription('قم بإضافة مصاريفك اليومية للبدء في تحليل نفقاتك ومراقبة الميزانية.')
+            ->emptyStateIcon('heroicon-o-credit-card')
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->icon('heroicon-m-pencil-square')
+                    ->color('primary'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
@@ -56,3 +62,4 @@ class ExpensesTable
             ]);
     }
 }
+

@@ -21,9 +21,20 @@ class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
-    protected static ?string $recordTitleAttribute = 'Category';
+    protected static string|\UnitEnum|null $navigationGroup = 'إدارة المال | Financial Management';
+
+
+    protected static ?string $navigationLabel = 'الفئات | Categories';
+
+    protected static ?string $modelLabel = 'فئة | Category';
+
+    protected static ?string $pluralModelLabel = 'الفئات | Categories';
+
+    protected static ?int $navigationSort = 3;
+
+    protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Schema $schema): Schema
     {
@@ -63,3 +74,4 @@ class CategoryResource extends Resource
             ->where('user_id', auth()->id());
     }
 }
+

@@ -21,9 +21,20 @@ class IncomeSourceResource extends Resource
 {
     protected static ?string $model = IncomeSource::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCurrencyDollar;
 
-    protected static ?string $recordTitleAttribute = 'IncomeSource';
+    protected static string|\UnitEnum|null $navigationGroup = 'إدارة المال | Financial Management';
+
+
+    protected static ?string $navigationLabel = 'مصادر الدخل | Income Sources';
+
+    protected static ?string $modelLabel = 'مصدر دخل | Income Source';
+
+    protected static ?string $pluralModelLabel = 'مصادر الدخل | Income Sources';
+
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Schema $schema): Schema
     {
@@ -63,3 +74,4 @@ class IncomeSourceResource extends Resource
             ->where('user_id', auth()->id());
     }
 }
+

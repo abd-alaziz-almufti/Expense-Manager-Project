@@ -16,29 +16,36 @@ class IncomeSourcesTable
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('Source Name')
+                    ->label('مصدر الدخل | Source Name')
+                    ->badge()
+                    ->color('emerald')
+                    ->icon('heroicon-m-sparkles')
                     ->searchable()
                     ->sortable(),
+
                 TextColumn::make('amount')
-                    ->label('Monthly Amount')
+                    ->label('المبلغ الشهري | Monthly Amount')
                     ->money('USD')
+                    ->weight('bold')
+                    ->color('success')
                     ->sortable(),
 
                 TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
+                    ->label('تاريخ الإضافة')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                //
-            ])
+            ->emptyStateHeading('لا توجد مصادر دخل مسجلة')
+            ->emptyStateDescription('قم بإضافة مصادر دخلك (مثل الراتب، المشاريع، أو الاستثمارات) لحساب الميزانية المتبقية بشكل صحيح.')
+            ->emptyStateIcon('heroicon-o-currency-dollar')
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                ViewAction::make()
+                    ->icon('heroicon-m-eye')
+                    ->color('info'),
+                EditAction::make()
+                    ->icon('heroicon-m-pencil-square')
+                    ->color('primary'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
@@ -47,3 +54,4 @@ class IncomeSourcesTable
             ]);
     }
 }
+

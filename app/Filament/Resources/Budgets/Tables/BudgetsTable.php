@@ -17,19 +17,24 @@ class BudgetsTable
             ->columns([
                 // شهر الميزانية
                 TextColumn::make('month')
-                    ->label('Month')
+                    ->label('شهر الميزانية | Month')
+                    ->badge()
+                    ->color('indigo')
+                    ->icon('heroicon-m-calendar')
                     ->date('F Y')
                     ->sortable(),
 
                 // الدخل
                 TextColumn::make('total_income')
-                    ->label('Total Income')
+                    ->label('إجمالي الدخل | Total Income')
                     ->money('USD')
+                    ->weight('bold')
+                    ->color('success')
                     ->sortable(),
 
                 // المصروفات (محسوبة)
                 TextColumn::make('expenses')
-                    ->label('Total Expenses')
+                    ->label('المصروفات الفعلية | Total Expenses')
                     ->getStateUsing(
                         fn($record) =>
                         Expense::where('user_id', $record->user_id)
@@ -37,11 +42,13 @@ class BudgetsTable
                             ->whereYear('expense_date', $record->month->year)
                             ->sum('amount')
                     )
-                    ->money('USD'),
+                    ->money('USD')
+                    ->weight('bold')
+                    ->color('danger'),
 
                 // المتبقي
                 TextColumn::make('remaining')
-                    ->label('Remaining')
+                    ->label('الرصيد المتبقي | Remaining')
                     ->getStateUsing(
                         fn($record) =>
                         $record->total_income -
@@ -51,24 +58,24 @@ class BudgetsTable
                             ->sum('amount')
                     )
                     ->money('USD')
-                    ->color(fn($state) => $state >= 0 ? 'success' : 'danger'),
+                    ->badge()
+                    ->color(fn($state) => $state >= 0 ? 'success' : 'danger')
+                    ->icon(fn($state) => $state >= 0 ? 'heroicon-m-check-circle' : 'heroicon-m-exclamation-triangle'),
 
-                //  تاريخ الإنشاء
+                // تاريخ الإنشاء
                 TextColumn::make('created_at')
-                    ->label('Created At')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
+                    ->label('تاريخ الإنشاء')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                //
-            ])
+            ->emptyStateHeading('لا توجد ميزانيات شهرية مسجلة')
+            ->emptyStateDescription('قم بإنشاء خطة ميزانية شهرية لمتابعة نسبة الإنفاق مقابل الدخل.')
+            ->emptyStateIcon('heroicon-o-scale')
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->icon('heroicon-m-pencil-square')
+                    ->color('primary'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
@@ -77,3 +84,4 @@ class BudgetsTable
             ]);
     }
 }
+

@@ -19,9 +19,20 @@ class BudgetResource extends Resource
 {
     protected static ?string $model = Budget::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedScale;
 
-    protected static ?string $recordTitleAttribute = 'Budget';
+    protected static string|\UnitEnum|null $navigationGroup = 'إدارة المال | Financial Management';
+
+
+    protected static ?string $navigationLabel = 'الميزانيات | Budgets';
+
+    protected static ?string $modelLabel = 'ميزانية | Budget';
+
+    protected static ?string $pluralModelLabel = 'الميزانيات | Budgets';
+
+    protected static ?int $navigationSort = 4;
+
+    protected static ?string $recordTitleAttribute = 'month';
 
     public static function form(Schema $schema): Schema
     {
@@ -55,3 +66,4 @@ class BudgetResource extends Resource
             ->where('user_id', auth()->id());
     }
 }
+

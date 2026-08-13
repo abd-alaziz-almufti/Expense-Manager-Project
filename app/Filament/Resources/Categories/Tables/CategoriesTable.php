@@ -16,39 +16,49 @@ class CategoriesTable
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('Category Name')
+                    ->label('اسم الفئة | Category Name')
+                    ->badge()
+                    ->color('indigo')
+                    ->icon('heroicon-m-tag')
                     ->searchable()
                     ->sortable(),
+
                 TextColumn::make('expected_amount')
-                    ->label('Expected Monthly Amount')
+                    ->label('الميزانية المتوقعة | Expected Budget')
                     ->money('USD')
                     ->sortable(),
 
                 TextColumn::make('spent')
-                    ->label('Spent (This Month)')
+                    ->label('المصروف الحالي | Spent This Month')
                     ->getStateUsing(fn($record) => $record->monthlyExpenses())
-                    ->money('USD'),
+                    ->money('USD')
+                    ->weight('bold')
+                    ->color('danger'),
+
                 TextColumn::make('remaining')
-                    ->label('Remaining')
+                    ->label('المتبقي | Remaining')
                     ->getStateUsing(fn($record) => $record->remainingAmount())
                     ->money('USD')
-                    ->color(fn($state) => $state < 0 ? 'danger' : 'success'),
+                    ->badge()
+                    ->color(fn($state) => $state < 0 ? 'danger' : 'success')
+                    ->icon(fn($state) => $state < 0 ? 'heroicon-m-exclamation-triangle' : 'heroicon-m-check-circle'),
 
                 TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
+                    ->label('تاريخ الإضافة')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                //
-            ])
+            ->emptyStateHeading('لا توجد فئات مسجلة حالياً')
+            ->emptyStateDescription('قم بإنشاء فئات لتنظيم مصاريفك (مثل: سكن، مواصلات، فواتير) وتحديد ميزانية لكل منها.')
+            ->emptyStateIcon('heroicon-o-tag')
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                ViewAction::make()
+                    ->icon('heroicon-m-eye')
+                    ->color('info'),
+                EditAction::make()
+                    ->icon('heroicon-m-pencil-square')
+                    ->color('primary'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
@@ -57,3 +67,4 @@ class CategoriesTable
             ]);
     }
 }
+
