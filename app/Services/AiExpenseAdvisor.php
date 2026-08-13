@@ -41,31 +41,35 @@ class AiExpenseAdvisor
             ->implode("\n");
 
         $prompt = "
-            You are a professional personal finance advisor.
-            
-            Important note:
-            All monetary values below are expressed in United States Dollars (USD).
-            
-            The following is a summary of the user's expenses for the current month:
-            
-            - Total expenses (USD): {$total}
-            - Highest spending category: {$topCategory}
-            - Breakdown by category (USD):
-            " . $byCategory->map(fn($amount, $category) => "- {$category}: {$amount} USD")->implode("\n") . "
-            
-            Category budget vs spending analysis (all amounts in USD):
-            {$categoryBudgetAnalysis}
-            
-            Your task:
-            1. Briefly analyze the spending behavior.
-            2. Identify categories where spending exceeded the expected budget.
-            3. Explain the remaining amount for each category in USD.
-            4. Give 3 short, practical, and realistic tips to reduce expenses.
-            5. Mention specific categories and dollar amounts when possible.
-            6. Keep the tone friendly, supportive, and easy to understand.
-            
-            Respond in clear bullet points in Arabic.
-            ";
+أنت مستشار مالي شخصي محترف ومحفز.
+
+فيما يلي تقرير مصاريف المستخدم للشهر الحالي (جميع المبالغ بالدولار الأمريكي USD):
+
+- إجمالي المصروفات: {$total} دولار
+- أكثر فئة إنفاقاً: {$topCategory}
+
+توزيع المصاريف حسب الفئات:
+" . $byCategory->map(fn($amount, $category) => "- {$category}: {$amount} دولار")->implode("\n") . "
+
+تحليل الميزانية المتوقعة مقابل الإنفاق الفعلي:
+{$categoryBudgetAnalysis}
+
+المطلوب منك تقديم تحليل مالي لطيف وواضح باللغة العربية الفصحى المباشرة مقسم كالتالي:
+
+### 📊 ملخص سلوك الإنفاق
+تحليل مختصر ومباشر لمستوى الإنفاق هذا الشهر.
+
+### ⚠️ الفئات والميزانيات
+توضيح الفئات التي تم استهلاك ميزانيتها أو تجاوزها بمبالغ محددة.
+
+### 💡 3 نصائح للتوفير
+ثلاث نصائح عملية وسهلة التطبيق لتقليل المصاريف الشهر القادم.
+
+شروط التنسيق:
+- اكتب باللغة العربية الفصحى فقط وبأسلوب مشجع.
+- استخدم القوائم المُنقطة (-) وليس الأرقام لمنع اختلال التنسيق.
+";
+
 
         try {
             $response = OpenAI::chat()->create([

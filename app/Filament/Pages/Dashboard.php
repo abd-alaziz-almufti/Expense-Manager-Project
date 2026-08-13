@@ -50,7 +50,11 @@ class Dashboard extends BaseDashboard
                                         background: #ffffff;
                                         border: 1px solid rgba(99, 102, 241, 0.2);
                                         color: #1e293b;
+                                        direction: rtl;
+                                        text-align: right;
+                                        unicode-bidi: plaintext;
                                     }
+
                                     .dark .ai-advice-body, html.dark .ai-advice-body, [data-theme="dark"] .ai-advice-body {
                                         background: rgba(15, 23, 42, 0.85) !important;
                                         border-color: rgba(99, 102, 241, 0.35) !important;
