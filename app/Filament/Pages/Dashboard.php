@@ -26,9 +26,60 @@ class Dashboard extends BaseDashboard
                     $advice = app(AiExpenseAdvisor::class)
                         ->analyze(auth()->id());
 
+                    $htmlAdvice = \Illuminate\Support\Str::markdown($advice);
+
                     return new HtmlString('
-                        <div style="background: rgba(99, 102, 241, 0.05); padding: 1.25rem; border-radius: 0.75rem; border-left: 4px solid #6366f1; line-height: 1.7;">
-                            ' . nl2br(e($advice)) . '
+                        <div class="ai-modal-wrapper" style="font-family: inherit; direction: rtl; text-align: right;">
+                            <!-- Header Banner -->
+                            <div style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%); padding: 1.25rem 1.5rem; border-radius: 1rem; color: #ffffff; margin-bottom: 1.25rem; box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.3);">
+                                <div style="display: flex; align-items: center; gap: 0.85rem;">
+                                    <div style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px); border-radius: 0.75rem; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0;">
+                                        ✨
+                                    </div>
+                                    <div>
+                                        <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #ffffff;">تحليل المستشار المالي الذكي</h3>
+                                        <p style="margin: 0.25rem 0 0 0; font-size: 0.85rem; color: rgba(255, 255, 255, 0.85);">نصائح مخصصة بناءً على سلوك إنفاقك هذا الشهر</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Advice Content Card -->
+                            <div class="ai-advice-body" style="background: var(--gray-50, rgba(249, 250, 251, 0.8)); border: 1px solid rgba(156, 163, 175, 0.2); padding: 1.5rem; border-radius: 1rem; line-height: 1.8; font-size: 0.95rem; color: inherit;">
+                                <style>
+                                    .ai-advice-body h1, .ai-advice-body h2, .ai-advice-body h3, .ai-advice-body h4 {
+                                        color: #6366f1;
+                                        font-weight: 700;
+                                        margin-top: 1rem;
+                                        margin-bottom: 0.5rem;
+                                        border-bottom: 2px solid rgba(99, 102, 241, 0.15);
+                                        padding-bottom: 0.35rem;
+                                    }
+                                    .ai-advice-body p {
+                                        margin-bottom: 0.85rem;
+                                    }
+                                    .ai-advice-body ul, .ai-advice-body ol {
+                                        padding-right: 1.25rem;
+                                        margin-bottom: 1rem;
+                                    }
+                                    .ai-advice-body li {
+                                        margin-bottom: 0.6rem;
+                                        position: relative;
+                                    }
+                                    .ai-advice-body strong {
+                                        color: #4f46e5;
+                                        font-weight: 700;
+                                    }
+                                    .ai-advice-body blockquote {
+                                        border-right: 4px solid #8b5cf6;
+                                        background: rgba(139, 92, 246, 0.06);
+                                        padding: 0.75rem 1rem;
+                                        border-radius: 0.5rem;
+                                        margin: 1rem 0;
+                                        font-style: normal;
+                                    }
+                                </style>
+                                ' . $htmlAdvice . '
+                            </div>
                         </div>
                     ');
                 }),
@@ -58,40 +109,69 @@ class Dashboard extends BaseDashboard
                     $rows = '';
 
                     foreach ($categories as $category) {
-                        $old = $category->expected_amount;
-                        $new = $plan[$category->name] ?? $old;
+                        $old = (float) $category->expected_amount;
+                        $new = (float) ($plan[$category->name] ?? $old);
+                        $diff = $new - $old;
+                        $changed = abs($diff) > 0.01;
 
-                        $changed = (float) $old !== (float) $new;
+                        $badge = '';
+                        if ($changed) {
+                            if ($diff < 0) {
+                                $badge = '<span style="background: rgba(239, 68, 68, 0.12); color: #ef4444; padding: 3px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">⬇ خفض $' . number_format(abs($diff), 2) . '</span>';
+                            } else {
+                                $badge = '<span style="background: rgba(16, 185, 129, 0.12); color: #10b981; padding: 3px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">⬆ زيادة $' . number_format($diff, 2) . '</span>';
+                            }
+                        } else {
+                            $badge = '<span style="opacity: 0.6; font-size: 0.75rem;">بدون تغيير</span>';
+                        }
 
                         $rows .= "
-                            <tr style='border-bottom: 1px solid rgba(0,0,0,0.05);'>
-                                <td style='padding: 10px 12px; font-weight: 600;'>{$category->name}</td>
-                                <td style='padding: 10px 12px;'>$" . number_format($old, 2) . "</td>
-                                <td style='padding: 10px 12px; font-weight: 700; color: " . ($changed ? '#10b981' : 'inherit') . ";'>
+                            <tr style='border-bottom: 1px solid rgba(156, 163, 175, 0.15);'>
+                                <td style='padding: 12px 16px; font-weight: 600;'>{$category->name}</td>
+                                <td style='padding: 12px 16px; opacity: 0.8;'>$" . number_format($old, 2) . "</td>
+                                <td style='padding: 12px 16px; font-weight: 700; color: " . ($changed ? ($diff > 0 ? '#10b981' : '#f59e0b') : 'inherit') . ";'>
                                     $" . number_format($new, 2) . "
-                                    " . ($changed ? ' <span style="background: #d1fae5; color: #065f46; padding: 2px 8px; border-radius: 9999px; font-size: 0.75rem;">تحديث ✔</span>' : '') . "
                                 </td>
+                                <td style='padding: 12px 16px; text-align: left;'>{$badge}</td>
                             </tr>
                         ";
                     }
 
                     return new HtmlString("
-                        <div style='overflow-x: auto; border-radius: 0.75rem; border: 1px solid rgba(0,0,0,0.08);'>
-                            <table style='width:100%; border-collapse: collapse; text-align: right;'>
-                                <thead>
-                                    <tr style='background: rgba(99, 102, 241, 0.08); border-bottom: 2px solid rgba(0,0,0,0.08);'>
-                                        <th style='padding: 12px;'>الفئة | Category</th>
-                                        <th style='padding: 12px;'>الميزانية الحالية</th>
-                                        <th style='padding: 12px;'>الميزانية المقترحة</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {$rows}
-                                </tbody>
-                            </table>
+                        <div style='font-family: inherit; direction: rtl;'>
+                            <!-- Header Banner -->
+                            <div style='background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 50%, #4f46e5 100%); padding: 1.25rem 1.5rem; border-radius: 1rem; color: #ffffff; margin-bottom: 1.25rem; box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3);'>
+                                <div style='display: flex; align-items: center; gap: 0.85rem;'>
+                                    <div style='background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px); border-radius: 0.75rem; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0;'>
+                                        🤖
+                                    </div>
+                                    <div>
+                                        <h3 style='margin: 0; font-size: 1.15rem; font-weight: 700; color: #ffffff;'>إعادة توزيع الميزانية الذكية</h3>
+                                        <p style='margin: 0.25rem 0 0 0; font-size: 0.85rem; color: rgba(255, 255, 255, 0.85);'>مقارنة الميزانية الحالية والمقترحة من الذكاء الاصطناعي</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Table Card -->
+                            <div style='overflow-x: auto; border-radius: 1rem; border: 1px solid rgba(156, 163, 175, 0.2); background: var(--gray-50, rgba(249, 250, 251, 0.5));'>
+                                <table style='width:100%; border-collapse: collapse; text-align: right; font-size: 0.95rem;'>
+                                    <thead>
+                                        <tr style='background: rgba(99, 102, 241, 0.08); border-bottom: 2px solid rgba(156, 163, 175, 0.2);'>
+                                            <th style='padding: 12px 16px;'>الفئة | Category</th>
+                                            <th style='padding: 12px 16px;'>الميزانية الحالية</th>
+                                            <th style='padding: 12px 16px;'>الميزانية المقترحة</th>
+                                            <th style='padding: 12px 16px; text-align: left;'>التعديل المقترح</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {$rows}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     ");
                 })
+
 
                 // ✅ زر Apply
                 ->modalSubmitActionLabel('تطبيق خطة الذكاء الاصطناعي | Apply AI Plan')
