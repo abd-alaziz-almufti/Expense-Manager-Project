@@ -44,15 +44,30 @@ class Dashboard extends BaseDashboard
                             </div>
 
                             <!-- Advice Content Card -->
-                            <div class="ai-advice-body" style="background: var(--gray-50, rgba(249, 250, 251, 0.8)); border: 1px solid rgba(156, 163, 175, 0.2); padding: 1.5rem; border-radius: 1rem; line-height: 1.8; font-size: 0.95rem; color: inherit;">
+                            <div class="ai-advice-body" style="padding: 1.5rem; border-radius: 1rem; line-height: 1.8; font-size: 0.95rem;">
                                 <style>
+                                    .ai-advice-body {
+                                        background: #ffffff;
+                                        border: 1px solid rgba(99, 102, 241, 0.2);
+                                        color: #1e293b;
+                                    }
+                                    .dark .ai-advice-body, html.dark .ai-advice-body, [data-theme="dark"] .ai-advice-body {
+                                        background: rgba(15, 23, 42, 0.85) !important;
+                                        border-color: rgba(99, 102, 241, 0.35) !important;
+                                        color: #f1f5f9 !important;
+                                    }
                                     .ai-advice-body h1, .ai-advice-body h2, .ai-advice-body h3, .ai-advice-body h4 {
-                                        color: #6366f1;
+                                        color: #4f46e5;
                                         font-weight: 700;
                                         margin-top: 1rem;
                                         margin-bottom: 0.5rem;
                                         border-bottom: 2px solid rgba(99, 102, 241, 0.15);
                                         padding-bottom: 0.35rem;
+                                    }
+                                    .dark .ai-advice-body h1, .dark .ai-advice-body h2, .dark .ai-advice-body h3, .dark .ai-advice-body h4,
+                                    html.dark .ai-advice-body h1, html.dark .ai-advice-body h2, html.dark .ai-advice-body h3, html.dark .ai-advice-body h4 {
+                                        color: #a5b4fc !important;
+                                        border-bottom-color: rgba(165, 180, 252, 0.2) !important;
                                     }
                                     .ai-advice-body p {
                                         margin-bottom: 0.85rem;
@@ -66,12 +81,15 @@ class Dashboard extends BaseDashboard
                                         position: relative;
                                     }
                                     .ai-advice-body strong {
-                                        color: #4f46e5;
+                                        color: #4338ca;
                                         font-weight: 700;
+                                    }
+                                    .dark .ai-advice-body strong, html.dark .ai-advice-body strong {
+                                        color: #818cf8 !important;
                                     }
                                     .ai-advice-body blockquote {
                                         border-right: 4px solid #8b5cf6;
-                                        background: rgba(139, 92, 246, 0.06);
+                                        background: rgba(139, 92, 246, 0.08);
                                         padding: 0.75rem 1rem;
                                         border-radius: 0.5rem;
                                         margin: 1rem 0;
@@ -153,7 +171,17 @@ class Dashboard extends BaseDashboard
                             </div>
 
                             <!-- Table Card -->
-                            <div style='overflow-x: auto; border-radius: 1rem; border: 1px solid rgba(156, 163, 175, 0.2); background: var(--gray-50, rgba(249, 250, 251, 0.5));'>
+                            <div class='ai-table-card' style='overflow-x: auto; border-radius: 1rem; border: 1px solid rgba(156, 163, 175, 0.2);'>
+                                <style>
+                                    .ai-table-card {
+                                        background: #ffffff;
+                                        color: #1e293b;
+                                    }
+                                    .dark .ai-table-card, html.dark .ai-table-card, [data-theme=\"dark\"] .ai-table-card {
+                                        background: rgba(15, 23, 42, 0.85) !important;
+                                        color: #f1f5f9 !important;
+                                    }
+                                </style>
                                 <table style='width:100%; border-collapse: collapse; text-align: right; font-size: 0.95rem;'>
                                     <thead>
                                         <tr style='background: rgba(99, 102, 241, 0.08); border-bottom: 2px solid rgba(156, 163, 175, 0.2);'>
@@ -171,6 +199,7 @@ class Dashboard extends BaseDashboard
                         </div>
                     ");
                 })
+
 
 
                 // ✅ زر Apply
