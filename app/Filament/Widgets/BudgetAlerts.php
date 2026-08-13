@@ -8,7 +8,9 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class BudgetAlerts extends StatsOverviewWidget
 {
+    protected static ?int $sort = 3;
     protected int|string|array $columnSpan = 'full';
+
     protected function getStats(): array
     {
         $overBudgetCategories = Category::where('user_id', auth()->id())
@@ -17,8 +19,9 @@ class BudgetAlerts extends StatsOverviewWidget
 
         if ($overBudgetCategories->isEmpty()) {
             return [
-                Stat::make('Budget Status', 'All categories are within budget')
-                    ->description('Great job managing your finances 🎉')
+                Stat::make('حالة الميزانية | Budget Status', 'جميع الفئات ضمن الميزانية السليمة 🎉')
+                    ->description('ممتاز! مصاريفك تحت السيطرة | Expenses under control')
+                    ->descriptionIcon('heroicon-m-check-circle')
                     ->color('success'),
             ];
         }
@@ -28,13 +31,15 @@ class BudgetAlerts extends StatsOverviewWidget
 
             return Stat::make(
                 $category->name,
-                'Over by $' . number_format($overAmount, 2)
+                'تجاوز بـ $' . number_format($overAmount, 2)
             )
-                ->description('Budget exceeded this month')
+                ->description('تم تجاوز الميزانية المحددة لهذا الشهر | Exceeded budget')
+                ->descriptionIcon('heroicon-m-exclamation-triangle')
                 ->color('danger');
         })->toArray();
     }
 }
+
 
 
 

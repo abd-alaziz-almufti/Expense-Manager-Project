@@ -10,7 +10,7 @@ class ExpensesByCategory extends ChartWidget
 {
     protected static ?int $sort = 2;
     protected int|string|array $columnSpan = 'full';
-    protected ?string $heading = 'Expenses By Category (Current Month)';
+    protected ?string $heading = 'توزيع المصاريف حسب الفئة (الشهر الحالي) | Expenses By Category';
 
     protected function getData(): array
     {
@@ -27,11 +27,25 @@ class ExpensesByCategory extends ChartWidget
             ->groupBy('categories.name')
             ->get();
 
+        $colors = [
+            '#6366f1', // Indigo
+            '#10b981', // Emerald
+            '#f59e0b', // Amber
+            '#f43f5e', // Rose
+            '#06b6d4', // Cyan
+            '#8b5cf6', // Purple
+            '#ec4899', // Pink
+            '#3b82f6', // Blue
+        ];
+
         return [
             'datasets' => [
                 [
-                    'label' => 'Expenses',
+                    'label' => 'المصاريف ($)',
                     'data' => $data->pluck('total')->toArray(),
+                    'backgroundColor' => array_slice($colors, 0, max(count($data), 1)),
+                    'borderWidth' => 2,
+                    'hoverOffset' => 6,
                 ],
             ],
             'labels' => $data->pluck('category')->toArray(),
@@ -40,6 +54,7 @@ class ExpensesByCategory extends ChartWidget
 
     protected function getType(): string
     {
-        return 'pie';
+        return 'doughnut';
     }
 }
+
